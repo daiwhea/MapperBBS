@@ -1,0 +1,19 @@
+<lift:surround with="default" at="content">
+	<h1>Wellcome to my Guest Book</h1>
+	<lift:GuestBook.paginate>
+		<div>
+			<notes:unreplied />/<notes:total /> <notes:firstPage /> <notes:prePage /> <notes:pageList /> <notes:nextPage /> <notes:lastPage />
+		</div>
+	</lift:GuestBook.paginate>
+	<lift:GuestBook.list >
+		<note:entries>
+		<div>
+			<p><item:email /></p>
+			<p><item:title /></p>
+			<p><item:content /></p>
+			<item:reply />
+		</div>
+		</note:entries>
+	</lift:GuestBook.list>
+	<lift:embed what="/templates-hidden/gbook/addForm" />
+</lift:surround>
