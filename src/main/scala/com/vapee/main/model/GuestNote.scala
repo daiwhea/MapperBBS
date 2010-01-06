@@ -13,6 +13,8 @@ import _root_.scala.xml.Text
 import _root_.java.util.Date
 import _root_.java.text.{DateFormat,SimpleDateFormat}
 
+import scala.xml.NodeSeq
+
 class GuestNote extends LongKeyedMapper[GuestNote] with IdPK{
 
   def getSingleton = GuestNote
@@ -28,7 +30,7 @@ class GuestNote extends LongKeyedMapper[GuestNote] with IdPK{
   }
   object createdTime extends MappedDateTime(this) {
     final val dateFormat =
-      DateFormat.getDateInstance(DateFormat.SHORT)
+    DateFormat.getDateInstance(DateFormat.SHORT)
     override def asHtml = Text(dateFormat.format(is))
     //override def dbIncludeInForm_? = false
   }
@@ -41,9 +43,12 @@ class GuestNote extends LongKeyedMapper[GuestNote] with IdPK{
     override def displayName  = "Your Reply:"
     //override def dbIncludeInForm_? = false
   }
+
+  def replyContentAsHtml: NodeSeq = this.replyContent split '\n' map { Text(_) ++ <br /> } reduceLeft (_ ++ _)
+
   object replyTime extends MappedDateTime(this) {
     final val dateFormat =
-      DateFormat.getDateInstance(DateFormat.SHORT)
+    DateFormat.getDateInstance(DateFormat.SHORT)
     override def asHtml = Text(dateFormat.format(is))
     //override def dbIncludeInForm_? = false
   }
@@ -51,6 +56,6 @@ class GuestNote extends LongKeyedMapper[GuestNote] with IdPK{
 }
 
 object GuestNote extends GuestNote with LongKeyedMetaMapper[GuestNote] {
-    override def dbTableName = "guest_notes" // define the DB table name
-    override def fieldOrder = List(title, email, content)
+  override def dbTableName = "guest_notes" // define the DB table name
+  override def fieldOrder = List(title, email, content)
 }
