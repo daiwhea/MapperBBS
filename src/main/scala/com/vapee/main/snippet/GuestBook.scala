@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package com.vapee.main.snippet
 
@@ -26,11 +22,6 @@ class GuestBook {
   var curPage = 0
 
   def addNote(html: NodeSeq): NodeSeq = {
-    def isValideNote(toCheck : GuestNote) : Boolean =
-      List((if (toCheck.title.length == 0) { S.error("You must provide a title"); false } else true),
-        (if (toCheck.email.length == 0) { S.error("You must provide a email address"); false } else true),
-        (if (toCheck.content.length == 0) { S.error("You must provide some note content"); false } else true)
-      ).forall(_ == true)
     def doAdd() = {
       if (isValideNote(note)) {
         note.createdTime(new Date())
@@ -39,6 +30,11 @@ class GuestBook {
         S.redirectTo("/gbook/")
       }
     }
+    def isValideNote(toCheck : GuestNote) : Boolean =
+      List((if (toCheck.title.length == 0) { S.error("You must provide a title"); false } else true),
+        (if (toCheck.email.length == 0) { S.error("You must provide a email address"); false } else true),
+        (if (toCheck.content.length == 0) { S.error("You must provide some note content"); false } else true)
+      ).forall(_ == true)
 
     bind("note", html,
      "title" -> SHtml.text(note.title, note.title(_)),
@@ -62,12 +58,11 @@ class GuestBook {
       if (curPid == destPid)
         Text(linkText)
       else {
-        //SHtml.link("list?page="+destPid, () => curPid = curPid, Text(linkText))
         val href = "?page="+destPid
         <a href={href}>{Text(linkText)}</a>
       }
     }
-    
+
     bind("notes", html,
       "total" -> totalNotes,
       "unreplied" -> unrepliedNotes,
@@ -79,35 +74,38 @@ class GuestBook {
     )
   }
 
+
   def list(html: NodeSeq): NodeSeq = {
-    val paginatedHtml = paginate(html)
     toShow.flatMap(item => {
-        bind("item", paginatedHtml,
+        curListNote = item
+        bind("item", html,
           "title" -> item.title,
           "email" -> item.email,
           "content" -> item.content,
-          "reply" -> getReplyContent(item)
+          "reply" -> getReplyContent(curListNote)
         )
       }
     )
   }
 
   def replyNote(html: NodeSeq): NodeSeq = {
+
+    val localNote = curListNote
+    
     def doReply() = {
-      if (note.replyContent.length == 0) {
+      if (localNote.replyContent.length == 0) {
         S.error("No reply content is provided.")
         S.redirectTo("/gbook/")
       }
-      note.repliedByAdmin(1)
-      if (note.save) {
+      localNote.repliedByAdmin(1)
+      if (localNote.save) {
         S.redirectTo("/gbook/")
       }
     }
-    val current = note
-    
+
     bind("note", html,
-      "id" -> SHtml.hidden( () => noteVar(current) ),
-      "replyContent" -> SHtml.textarea(note.replyContent, note.replyContent(_)),
+      "replyContent" -> SHtml.textarea(localNote.replyContent,
+                                    localNote.replyContent(_)),
       "submit" -> SHtml.submit("Reply", doReply)
     )
   }
@@ -118,12 +116,18 @@ class GuestBook {
     GuestNote.findAll(OrderBy(GuestNote.id, Ascending), StartAt(startAt), MaxRows(pageSize))
   }
 
-  private def getReplyContent(note: GuestNote) = {
-    if (note.repliedByAdmin == 0) {
-      <div><p>Not replied by admin</p>{SHtml.link("reply", () => noteVar(note), Text("Reply"))}</div>
+  var curListNote: GuestNote = _
+
+  private def getReplyContent(item: GuestNote) = {
+    if (item.repliedByAdmin == 0) {
+      <div><p>Not replied by admin</p><p>
+          {item.replyContent split '\n' map { Text(_) ++ <br /> } reduceLeft (_ ++ _) }
+                                      </p><lift:embed what="/templates-hidden/gbook/replyForm" /></div>
     }
     else
-      <div><p>{"Replied by admin at: "+note.replyTime}:</p><p>{note.replyContent.replaceAll("\n", "<br />")}</p>{SHtml.link("reply", () => noteVar(note), Text("Reply"))}</div>
+      <div><p>{"Replied by admin at: "+item.replyTime}</p><p>
+          {item.replyContent split '\n' map { Text(_) ++ <br /> } reduceLeft (_ ++ _) }
+                                      </p><lift:embed what="/templates-hidden/gbook/replyForm" /></div>
   }
 
 }

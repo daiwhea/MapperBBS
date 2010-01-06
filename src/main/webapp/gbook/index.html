@@ -8,7 +8,7 @@
 			<notes:unreplied />/<notes:total /> <notes:firstPage /> <notes:prePage /> <notes:pageList /> <notes:nextPage /> <notes:lastPage />
 		</div>
 	</lift:GuestBook.paginate>
-	<lift:GuestBook.list >
+	<lift:GuestBook.list eager_eval="true">
 		<div class="note">
 			<p><item:email /></p>
 			<p><item:title /></p>
