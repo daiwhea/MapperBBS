@@ -82,7 +82,7 @@ class GuestBook {
   def list(html: NodeSeq): NodeSeq = {
     val paginatedHtml = paginate(html)
     toShow.flatMap(item => {
-        bind("item", chooseTemplate("note", "entries", paginatedHtml),
+        bind("item", paginatedHtml,
           "title" -> item.title,
           "email" -> item.email,
           "content" -> item.content,
@@ -123,7 +123,7 @@ class GuestBook {
       <div><p>Not replied by admin</p>{SHtml.link("reply", () => noteVar(note), Text("Reply"))}</div>
     }
     else
-      <div><p>{"Replied by admin at: "+note.replyTime}:</p><p>{note.replyContent}</p></div>
+      <div><p>{"Replied by admin at: "+note.replyTime}:</p><p>{note.replyContent.replaceAll("\n", "<br />")}</p>{SHtml.link("reply", () => noteVar(note), Text("Reply"))}</div>
   }
 
 }
