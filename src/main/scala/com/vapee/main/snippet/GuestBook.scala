@@ -70,7 +70,7 @@ class GuestBook {
       "prePage" -> linkIfOther(if (curPid-1 > 0) (curPid-1) else 0 , preText),
       "nextPage" -> linkIfOther(if (curPid+1>maxPid) maxPid else curPid+1, nextText),
       "lastPage" -> linkIfOther(maxPid, lastText),
-      "pageList" -> <b>{curPid}</b>
+      "pageList" -> <b>{curPid+1}</b>
     )
   }
 
