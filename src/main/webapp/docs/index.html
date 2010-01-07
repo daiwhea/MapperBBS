@@ -1,0 +1,56 @@
+<lift:surround with="default" at="content">
+  <h1 style="text-align: center;">LiftWeb Newbie Tips</h1>
+  <ol>
+	<li>Create a new lift project from one archetype:<br />
+		mvn archetype:generate -U \<br/>
+		-DgroupId=com.vapee.main \<br/>
+		-DartifactId=MapperBBS \<br/>
+		-Dversion=1.0 \<br/>
+		-DarchetypeGroupId=net.liftweb \<br/>
+		-DarchetypeArtifactId=lift-archetype-basic \<br/>
+		-DremoteRepositories=http://scala-tools.org/repo-releases \<br/>
+		-DarchetypeVersion=1.1-M8 \<br/>
+		-Dscala.version=2.7.7</li>
+	<li>在下面的连接可以找到 lift 的 archetype:<br/>http://scala-tools.org/repo-releases/net/liftweb/</li>
+	<li>change jetty port:<br/>
+		<ul>
+			<li>via runtime Parameters:<br />mvn jetty:run -Djetty.port=9090</li>
+			<li>via configuration(change the pom.xml)<br/>
+			&lt;plugin&gt;<br/>
+				&lt;groupId&gt;org.mortbay.jetty&lt;/groupId&gt;<br/>
+				&lt;artifactId&gt;maven-jetty-plugin&lt;/artifactId&gt;<br/>
+				&lt;configuration&gt;<br/>
+					&lt;contextPath&gt;/&lt;/contextPath&gt;<br/>
+					&lt;scanIntervalSeconds&gt;5&lt;/scanIntervalSeconds&gt;<br/>
+					<span style="background-color: rgb(255, 255, 0);">          &lt;connectors&gt;</span><br />
+					<span style="background-color: rgb(0, 255, 0);">            &lt;connector implementation="org.mortbay.jetty.nio.SelectChannelConnector"&gt;</span><br />
+					<span style="background-color: rgb(0, 255, 0);">              <b style="color: rgb(255, 255, 0); background-color: rgb(255, 0, 0);">&lt;port&gt;9090&lt;/port&gt;</b></span><br />
+					<span style="background-color: rgb(0, 255, 0);">              &lt;maxIdleTime&gt;60000&lt;/maxIdleTime&gt;</span><br />
+					<span style="background-color: rgb(0, 255, 0);">            &lt;/connector&gt;</span><br />
+					<span style="background-color: rgb(255, 255, 0);">          &lt;/connectors&gt;</span><br />
+				&lt;/configuration&gt;<br/>
+			&lt;/plugin&gt;</li>
+		</ul>
+	</li>
+	<li><span class="pcrr8t-x-x-109">run lift project:<br /></span>
+		mvn jetty:run -Dscala.version=2.7.7 -Djetty.port=9090<br/>
+		use <b style="color: rgb(255, 0, 255);">-Dscala.version=2.7.7 -Djetty.port=9090</b> to overwrite the default setting.
+	</li>
+	<li>Performance:<br/>
+		In fact, the performance of one web framework is usually the most concerned things. As David once said that Lift can achieve a page without DB querying less than 1 Milliseconds. But when you checkout one lift archivetype and run it via "mvn jetty:run". You probably won't trust what you have seen. A simple static page with few lines words will take 22 Milliseconds or higher. The reason is quite simple and direct.<br/>
+		<ul>
+			<li>Run in production mode.  Templates and other things are aggressively cached in production mode. <br/>
+				You can run the mvn command as : " mvn jetty:run -Dscala.version=2.7.5 <b><span style="color: rgb(255, 255, 0); background-color: rgb(255, 0, 0);">-Drun.mode=production </span></b>-DXmx1024m".</li>
+			<li>Explicitly declare all of your snippets rather than requiring lookup via reflection.</li>
+			<li>Before starting your benchmark, load every page in the benchmark at least 50,000 times. This gets HotSpot warmed up.</li>
+			<li>use ab to do a benchmark: "ab -kc 100 -n 20000 http://localhost:9090/"</li>
+		</ul>
+	</li>
+	<li>Create db tables for your model calss:<br/>
+		Schemifier.schemify(true, Log.infoF _, User, <span style="background-color: rgb(255, 255, 0);">GuestNote</span>)<br/>
+		Add your model class as GuestNote.
+	</li>
+	<li>SiteMap:<br/></li>
+  </ol>
+</lift:surround>
+

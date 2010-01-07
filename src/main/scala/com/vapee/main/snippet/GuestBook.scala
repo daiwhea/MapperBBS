@@ -15,7 +15,6 @@ import scala.xml._
 
 class GuestBook {
   val pageSize: Int = 3
-  // var curPage = 0
 
   def addNote(html: NodeSeq): NodeSeq = {
     val note = GuestNote.create
@@ -78,6 +77,7 @@ class GuestBook {
     toShow.flatMap(item => 
         bind("item", html,
              "title" -> item.title,
+             "createdTime" -> item.createdTime,
              "email" -> item.email,
              "content" -> item.content,
              "reply" -> getReplyContent(item)))
@@ -112,17 +112,17 @@ class GuestBook {
   }
 
   private def getReplyContent(item: GuestNote) = 
-  if (item.repliedByAdmin.is == 0) {
-    <div>
-      <p>Not replied by admin</p>
-      <p>{item.replyContentAsHtml}</p>
-      {replyNote(item)}
-    </div>
-  } else {
-    <div>
-      <p>{"Replied by admin at: "+item.replyTime}</p>
-      <p>{item.replyContentAsHtml}</p>
-      {replyNote(item)}
-    </div>
-  }
+    if (item.repliedByAdmin.is == 0) {
+      <div>
+        <p>Not replied by admin</p>
+        <p>{item.replyContentAsHtml}</p>
+        {replyNote(item)}
+      </div>
+    } else {
+      <div>
+        <p>{"Replied by admin at: "+item.replyTime}</p>
+        <p>{item.replyContentAsHtml}</p>
+        {replyNote(item)}
+      </div>
+    }
 }

@@ -33,7 +33,7 @@ class Boot {
     // Build SiteMap
     val entries = Menu(Loc("Home", List("index"), "Home")) ::
       Menu(Loc("Guest Book", ("gbook" :: Nil) -> true, "Guest Book")) ::
-	    Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content")) ::
+	    Menu(Loc("Docs", Link(List("docs"), true, "/docs/index"), "Docs")) ::
       User.sitemap
 
     LiftRules.setSiteMap(SiteMap(entries:_*))

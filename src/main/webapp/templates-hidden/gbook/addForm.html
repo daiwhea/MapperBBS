@@ -1,4 +1,5 @@
-<div>
+<div id="addNote">
+	<h3>Add My Note:</h3>
 	<lift:GuestBook.addNote form="post">
 		<div>
 			<label>Title:</label><note:title />
@@ -9,6 +10,6 @@
 		<div>
 			<label>Your Note:</label><note:content />
 		</div>
-		<div><note:submit /></div>
+		<div class="submit"><note:submit /> <input type="reset" value="Reset" /></div>
 	</lift:GuestBook.addNote>
 </div>
