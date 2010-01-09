@@ -6,7 +6,7 @@ import com.vapee.main._
 import model._
 import _root_.net.liftweb._
 import _root_.net.liftweb.common._
-import util._
+import _root_.net.liftweb.util._
 import Helpers._
 import http._
 import _root_.net.liftweb.mapper._
@@ -79,7 +79,7 @@ class GuestBook {
              "title" -> item.title,
              "createdTime" -> item.createdTime,
              "email" -> item.email,
-             "content" -> item.content,
+             "content" -> item.noteContentAsHtml,
              "reply" -> getReplyContent(item)))
  
 
@@ -93,6 +93,7 @@ class GuestBook {
           S.redirectTo("/gbook/")
         }
         item.repliedByAdmin(1)
+        item.replyTime(new Date())
         if (item.save) {
           S.redirectTo("/gbook/")
         }

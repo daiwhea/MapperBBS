@@ -44,7 +44,8 @@ class GuestNote extends LongKeyedMapper[GuestNote] with IdPK{
     //override def dbIncludeInForm_? = false
   }
 
-  def replyContentAsHtml: NodeSeq = this.replyContent split '\n' map { Text(_) ++ <br /> } reduceLeft (_ ++ _)
+  def noteContentAsHtml: NodeSeq = GuestNote.nl2br(this.content)
+  def replyContentAsHtml: NodeSeq = GuestNote.nl2br(this.replyContent)
 
   object replyTime extends MappedDateTime(this) {
     final val dateFormat =
@@ -58,4 +59,6 @@ class GuestNote extends LongKeyedMapper[GuestNote] with IdPK{
 object GuestNote extends GuestNote with LongKeyedMetaMapper[GuestNote] {
   override def dbTableName = "guest_notes" // define the DB table name
   override def fieldOrder = List(title, email, content)
+
+  def nl2br(s: String) = s split '\n' map { Text(_) ++ <br /> } reduceLeft (_ ++ _)
 }
